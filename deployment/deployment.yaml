@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mymicroservice
+  labels:
+    app: mymicroservice
+spec:
+  selector:
+    matchLabels:
+      app: mymicroservice
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: mymicroservice
+    spec:
+      containers:
+      - name: mymicroservice
+        image: spennington/test-microservice-image
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8046
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mymicroservice
+spec: 
+  selector:
+    app: mymicroservice
+  ports:
+    - port: 8046
+      targetPort: 80
+  type: LoadBalancer
